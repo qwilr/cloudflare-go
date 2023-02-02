@@ -44,6 +44,8 @@ const (
 	WorkerQueueBindingType WorkerBindingType = "queue"
 	// DispatchNamespaceBindingType is the type for WFP namespace bindings.
 	DispatchNamespaceBindingType WorkerBindingType = "dispatch_namespace"
+	// WorkerD1DatabaseBindingType is the type for D1 database bindings.
+	WorkerD1DatabaseBindingType WorkerBindingType = "d1"
 )
 
 type ListWorkerBindingsParams struct {
@@ -421,6 +423,28 @@ func (b UnsafeBinding) serialize(bindingName string) (workerBindingMeta, workerB
 	return b, nil, nil
 }
 
+// WorkerD1DatabaseBinding is a binding to a D1 database.
+type WorkerD1DatabaseBinding struct {
+	ID string
+}
+
+// Type returns the type of the binding.
+func (b WorkerD1DatabaseBinding) Type() WorkerBindingType {
+	return WorkerD1DatabaseBindingType
+}
+
+func (b WorkerD1DatabaseBinding) serialize(bindingName string) (workerBindingMeta, workerBindingBodyWriter, error) {
+	if b.ID == "" {
+		return nil, nil, fmt.Errorf(`ID for binding "%s" cannot be empty`, bindingName)
+	}
+
+	return workerBindingMeta{
+		"name": bindingName,
+		"type": b.Type(),
+		"id":   b.ID,
+	}, nil, nil
+}
+
 // Each binding that adds a part to the multipart form body will need
 // a unique part name so we just generate a random 128bit hex string.
 func getRandomPartName() string {
@@ -528,6 +552,11 @@ func (api *API) ListWorkerBindings(ctx context.Context, rc *ResourceContainer, p
 			dataset := jsonBinding["dataset"].(string)
 			bindingListItem.Binding = WorkerAnalyticsEngineBinding{
 				Dataset: dataset,
+			}
+		case WorkerD1DatabaseBindingType:
+			id := jsonBinding["id"].(string)
+			bindingListItem.Binding = WorkerD1DatabaseBinding{
+				ID: id,
 			}
 		default:
 			bindingListItem.Binding = WorkerInheritBinding{}
