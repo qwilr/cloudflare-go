@@ -144,7 +144,7 @@ const (
 			{
 				"name": "__D1_BETA__MY_DATABASE",
 				"type": "d1",
-				"id": "34b76efbf57fe7a5940877304d000bd2"
+				"database_id": "34b76efbf57fe7a5940877304d000bd2"
 			}
 		],
 		"success": true,

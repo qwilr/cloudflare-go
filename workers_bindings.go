@@ -439,9 +439,9 @@ func (b WorkerD1DatabaseBinding) serialize(bindingName string) (workerBindingMet
 	}
 
 	return workerBindingMeta{
-		"name": bindingName,
-		"type": b.Type(),
-		"id":   b.ID,
+		"name":        bindingName,
+		"type":        b.Type(),
+		"id": b.ID,
 	}, nil, nil
 }
 
@@ -554,7 +554,7 @@ func (api *API) ListWorkerBindings(ctx context.Context, rc *ResourceContainer, p
 				Dataset: dataset,
 			}
 		case WorkerD1DatabaseBindingType:
-			id := jsonBinding["id"].(string)
+			id := jsonBinding["database_id"].(string)
 			bindingListItem.Binding = WorkerD1DatabaseBinding{
 				ID: id,
 			}
